@@ -70,24 +70,31 @@ totalErr = zeros(1,param.numIteration);
 
 for iterNum = 1:param.numIteration
     % find the coefficients
-    if (1)%(param.errorFlag==0)
-        %CoefMatrix = mexOMPIterative2(Data, [FixedDictionaryElement,Dictionary],param.L);
-        %CoefMatrix = OMP([FixedDictionaryElement,Dictionary],Data, param.L);
-        myDic  = [FixedDictionaryElement,Dictionary];
+%     CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
+%     param.L = 1;
+            myDic  = [FixedDictionaryElement,Dictionary];
         numOfAtoms = size(myDic,2);
         numOfSignals = size(Data,2);
         mydim=size(myDic,1);
         CoefMatrix = zeros([numOfAtoms,numOfSignals]);
-        for iii = 1:numOfSignals
+        parfor iii = 1:numOfSignals
             [s, err_mse, iter_time]=greed_omp_qr(Data(:,iii),myDic,numOfAtoms);
             CoefMatrix(:,iii)=s';
         end
         param.L = 1;
-    else 
-        %CoefMatrix = mexOMPerrIterative(Data, [FixedDictionaryElement,Dictionary],param.errorGoal);
-        CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
-        param.L = 1;
-    end
+
+    
+%     if (0)%(param.errorFlag==0)
+%         %CoefMatrix = mexOMPIterative2(Data, [FixedDictionaryElement,Dictionary],param.L);
+%         CoefMatrix = OMP([FixedDictionaryElement,Dictionary],Data, param.L);
+%         
+% 
+%         
+%     else 
+%         %CoefMatrix = mexOMPerrIterative(Data, [FixedDictionaryElement,Dictionary],param.errorGoal);
+%         CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
+%         param.L = 1;
+%     end
     
     replacedVectorCounter = 0;
 	rPerm = randperm(size(Dictionary,2));%字典是20*50的  这里是50的乱序

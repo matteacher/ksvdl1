@@ -165,20 +165,20 @@ for jj = 1:30000:size(blocks,2)
     end
     
     %Coefs = mexOMPerrIterative(blocks(:,jj:jumpSize),Dictionary,errT);
-    %Coefs = OMPerr(Dictionary,blocks(:,jj:jumpSize),errT);
+    Coefs = OMPerr(Dictionary,blocks(:,jj:jumpSize),errT);
     
 
-        myDic  = Dictionary;
-        myData = blocks(:,jj:jumpSize);
-        numOfAtoms = size(myDic,2);
-        numOfSignals = size(myData,2);
-        mydim=size(myDic,1);
-        Coefs = zeros([numOfAtoms,numOfSignals]);
-        for iii = 1:numOfSignals
-            [s, err_mse, iter_time]=greed_omp_qr(myData(:,iii),myDic,numOfAtoms);
-            Coefs(:,iii)=s';
-        end
-        %param.L = 1;
+%         myDic  = Dictionary;
+%         myData = blocks(:,jj:jumpSize);
+%         numOfAtoms = size(myDic,2);
+%         numOfSignals = size(myData,2);
+%         mydim=size(myDic,1);
+%         Coefs = zeros([numOfAtoms,numOfSignals]);
+%         for iii = 1:numOfSignals
+%             [s, err_mse, iter_time]=greed_omp_qr(myData(:,iii),myDic,numOfAtoms);
+%             Coefs(:,iii)=s';
+%         end
+        
         
         
     if (reduceDC)
