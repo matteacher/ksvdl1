@@ -70,18 +70,18 @@ totalErr = zeros(1,param.numIteration);
 
 for iterNum = 1:param.numIteration
     % find the coefficients
-%     CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
-%     param.L = 1;
-            myDic  = [FixedDictionaryElement,Dictionary];
-        numOfAtoms = size(myDic,2);
-        numOfSignals = size(Data,2);
-        mydim=size(myDic,1);
-        CoefMatrix = zeros([numOfAtoms,numOfSignals]);
-        parfor iii = 1:numOfSignals
-            [s, err_mse, iter_time]=greed_omp_qr(Data(:,iii),myDic,numOfAtoms);
-            CoefMatrix(:,iii)=s';
-        end
-        param.L = 1;
+    CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
+    param.L = 1;
+%             myDic  = [FixedDictionaryElement,Dictionary];
+%         numOfAtoms = size(myDic,2);
+%         numOfSignals = size(Data,2);
+%         mydim=size(myDic,1);
+%         CoefMatrix = zeros([numOfAtoms,numOfSignals]);
+%         parfor iii = 1:numOfSignals
+%             [s, err_mse, iter_time]=greed_omp_qr(Data(:,iii),myDic,numOfAtoms);
+%             CoefMatrix(:,iii)=s';
+%         end
+%         param.L = 1;
 
     
 %     if (0)%(param.errorFlag==0)
