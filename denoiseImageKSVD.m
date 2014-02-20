@@ -94,7 +94,14 @@ if(prod([NN1,NN2,NN3]-bb+1)> maxNumBlocksToTrainOn)
         blkMatrix(:,i) = currBlock(:);
     end
 else
-    blkMatrix = im2col(Image,[bb,bb,bb],'sliding');%分成8*8的子矩阵，每个矩阵作为一列。sliding表示可以重叠，尽可能多
+    blkNum= prod([NN1,NN2,NN3]-bb+1);
+    blkMatrix = zeros(bb^3,blkNum); %64行max列的0
+    for i = 1:blkNum
+        [row,col,zz] = ind2sub(size(Image)-bb+1,i);%一维索引转成多维下标
+        currBlock = Image(row:row+bb-1,col:col+bb-1,zz:zz+bb-1);
+        blkMatrix(:,i) = currBlock(:);
+    end
+    %blkMatrix = im2col(Image,[bb,bb,bb],'sliding');%分成8*8的子矩阵，每个矩阵作为一列。sliding表示可以重叠，尽可能多
 end
 
 param.K = K; %
@@ -133,8 +140,10 @@ end
 
 
 param.displayProgress = displayFlag;
-[Dictionary,output] = KSVD(blkMatrix,param);
-output.D = Dictionary;
+% [Dictionary,output] = KSVD(blkMatrix,param);
+% output.D = Dictionary;
+output =1;
+load('C:\data\KSVDDic.mat');
 
 if (displayFlag)
     disp('finished Trainning dictionary');
@@ -143,13 +152,13 @@ end
 
 % denoise the image using the resulted dictionary
 errT = sigma*C;
-IMout=zeros(NN1,NN2);
-Weight=zeros(NN1,NN2);
+IMout=zeros(NN1,NN2,NN3);
+Weight=zeros(NN1,NN2,NN3);
 %blocks = im2col(Image,[NN1,NN2],[bb,bb],'sliding');
 while (prod(floor((size(Image)-bb)/slidingDis)+1)>maxBlocksToConsider)
     slidingDis = slidingDis+1;
 end
-[blocks,idx] = my_im2col(Image,[bb,bb],slidingDis);
+[blocks,idx] = my_im2col(Image,[bb,bb,bb],slidingDis);
 
 if (waitBarOn)
     newCounterForWaitBar = (param.numIteration+1)*size(blocks,2);
@@ -192,14 +201,14 @@ for jj = 1:30000:size(blocks,2)
 end
 
 count = 1;
-Weight = zeros(NN1,NN2);
-IMout = zeros(NN1,NN2);
-[rows,cols] = ind2sub(size(Image)-bb+1,idx);
+Weight = zeros(NN1,NN2,NN3);
+IMout = zeros(NN1,NN2,NN3);
+[rows,cols,zzs] = ind2sub(size(Image)-bb+1,idx);
 for i  = 1:length(cols)
-    col = cols(i); row = rows(i);        
-    block =reshape(blocks(:,count),[bb,bb]);
-    IMout(row:row+bb-1,col:col+bb-1)=IMout(row:row+bb-1,col:col+bb-1)+block;
-    Weight(row:row+bb-1,col:col+bb-1)=Weight(row:row+bb-1,col:col+bb-1)+ones(bb);
+    col = cols(i); row = rows(i);zz=zzs(i);        
+    block =reshape(blocks(:,count),[bb,bb,bb]);
+    IMout(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)=IMout(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)+block;
+    Weight(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)=Weight(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)+ones([bb,bb,bb]);
     count = count+1;
 end;
 

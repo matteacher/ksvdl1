@@ -1,5 +1,5 @@
 try
-    demo2
+    predemo2_3d
 catch
    
     system('C:\matlab\zhy\notify.py')

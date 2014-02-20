@@ -5,7 +5,7 @@ addpath('..')
 load 'C:\data\image_0.mat'
 load 'C:\data\DCT3.mat' %8^3 12^3
 
-IMinnoise= imageM; % (101:120,101:120,101:120);
+IMinnoise= imageM(101:120,101:120,101:120);
 %Ps=sum(sum(sum((I-mean(mean(mean(I)))).^2)));
 % Ps = sum((IMinnoise(:)-mean(IMinnoise(:))).^2); %signal power
 % SNR=0.1; %Ps/Pn = SNR
@@ -22,7 +22,7 @@ K=1728; %12^3
 %save(['C:\data\IoutDCT_sigma' num2str(sigma) '_blocks1500000' '.mat'],'IoutDCT','output')
 
 [IoutAdaptive,output] = denoiseImageKSVD(IMinnoise, sigma,K);
-save(['C:\data\IoutAdaptive_sigma' num2str(sigma) '_blocks50000' '.mat'],'IoutAdaptive','output')
+save(['C:\data\IoutAdaptive_sigma' num2str(sigma) '_blocks65000' '.mat'],'IoutAdaptive','output')
 
 %PSNROut = 20*log10(255/sqrt(mean((IoutDCT(:)-IMinori(:)).^2)));
 %disp([datestr(now,0) ' DCT PSNROut=' num2str(PSNROut)])
