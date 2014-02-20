@@ -178,7 +178,7 @@ for jj = 1:30000:size(blocks,2)
     end
     
     %Coefs = mexOMPerrIterative(blocks(:,jj:jumpSize),Dictionary,errT);
-    Coefs = OMPerr(Dictionary,blocks(:,jj:jumpSize),errT);
+    Coefs = l1(Dictionary,blocks(:,jj:jumpSize),errT);
     
 
 %         myDic  = Dictionary;

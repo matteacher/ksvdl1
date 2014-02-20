@@ -120,7 +120,7 @@ for jj = 1:10000:size(blocks,2)
         blocks(:,jj:jumpSize) = blocks(:,jj:jumpSize) - repmat(vecOfMeans,size(blocks,1),1);
     end
     %Coefs = mexOMPerrIterative(blocks(:,jj:jumpSize),D,errT);
-    Coefs = OMPerr(D,blocks(:,jj:jumpSize),errT);
+    Coefs = l1(D,blocks(:,jj:jumpSize),errT);
     if (Reduce_DC)
         %block=reshape(D*a+mm+MM,[bb,bb]);
         blocks(:,jj:jumpSize)= D*Coefs + ones(size(blocks,1),1) * vecOfMeans;

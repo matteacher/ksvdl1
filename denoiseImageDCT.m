@@ -145,7 +145,7 @@ for jj = 1:10000:size(blocks,2) %从1到255025 每次跳10000个
         blocks(:,jj:jumpSize) = blocks(:,jj:jumpSize) - repmat(vecOfMeans,size(blocks,1),1); %扩展成64行10000列，并对对应列减去对应列的均值
     end
     %Coefs = mexOMPerrIterative(blocks(:,jj:jumpSize),DCT,errT);
-    Coefs = OMPerr(DCT,blocks(:,jj:jumpSize),errT);
+    Coefs = l1(DCT,blocks(:,jj:jumpSize),errT);
     if (Reduce_DC)
         blocks(:,jj:jumpSize)= DCT*Coefs + ones(size(blocks,1),1) * vecOfMeans; %将10000列系数xDCT 加上对应列的均值后回填到这10000列
     else

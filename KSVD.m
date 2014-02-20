@@ -70,7 +70,7 @@ totalErr = zeros(1,param.numIteration);
 
 for iterNum = 1:param.numIteration
     % find the coefficients
-    CoefMatrix = OMPerr([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
+    CoefMatrix = l1([FixedDictionaryElement,Dictionary],Data, param.errorGoal);
     param.L = 1;
 %             myDic  = [FixedDictionaryElement,Dictionary];
 %         numOfAtoms = size(myDic,2);
