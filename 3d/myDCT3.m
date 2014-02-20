@@ -14,7 +14,7 @@ function [ DCT ] = myDCT3( input_args )
 % DCT coefficient function
 
  
-M=88;
+M=8;
 MM=12;
 
 figure;

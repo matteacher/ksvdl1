@@ -58,7 +58,7 @@ for argI = 1:2:length(varargin)
 end
 errT = C*sigma;
 % Create an initial dictionary from the DCT frame
-Pn=ceil(sqrt(K)); %K=256  Pn=16
+Pn=ceil(K^(1/3)); %K=256  Pn=16
 
 
 % DCT=zeros(bb,Pn); %8行16列
@@ -80,8 +80,8 @@ addpath('3d');
 
 
 %字典D 512行 2048列
-DCT = blocks(:,1:2048);
-
+%DCT = blocks(:,1:2048);
+load('C:\data\DCT3.mat')
 
 % %imwrite(DCT,'myDCT.bmp')
 % %imshow(DCT,[]); title('myDCT');
@@ -139,7 +139,7 @@ for jj = 1:10000:size(blocks,2) %从1到255025 每次跳10000个
     if (waitBarOn)
         waitbar(jj/counterForWaitBar);
     end
-    jumpSize = min(jj+10000-1,size(blocks,2)); %本次的最后一个，不能超出255025
+    jumpSize = min(jj+10000-1,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       size(blocks,2)); %本次的最后一个，不能超出255025
     if (Reduce_DC)%1-10000列数据
         vecOfMeans = mean(blocks(:,jj:jumpSize)); %1-10000列，10000个列的平均值
         blocks(:,jj:jumpSize) = blocks(:,jj:jumpSize) - repmat(vecOfMeans,size(blocks,1),1); %扩展成64行10000列，并对对应列减去对应列的均值
