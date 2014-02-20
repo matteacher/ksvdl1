@@ -5,7 +5,7 @@ addpath('..')
 load 'C:\data\image_0.mat'
 load 'C:\data\DCT3.mat' %8^3 12^3
 
-IMinnoise= imageM(101:120,101:120,101:120);
+IMinnoise= imageM; %(101:120,101:120,101:120);
 %Ps=sum(sum(sum((I-mean(mean(mean(I)))).^2)));
 % Ps = sum((IMinnoise(:)-mean(IMinnoise(:))).^2); %signal power
 % SNR=0.1; %Ps/Pn = SNR

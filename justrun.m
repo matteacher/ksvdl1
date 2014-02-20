@@ -1,3 +1,4 @@
+addpath('3d')
 try
     predemo2_3d
 catch

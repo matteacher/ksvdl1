@@ -140,10 +140,11 @@ end
 
 
 param.displayProgress = displayFlag;
-% [Dictionary,output] = KSVD(blkMatrix,param);
-% output.D = Dictionary;
-output =1;
-load('C:\data\KSVDDic.mat');
+[Dictionary,output] = KSVD(blkMatrix,param);
+output.D = Dictionary;
+save('C:\data\KSVDDic.mat','Dictionary','output')
+% output =1;
+% load('C:\data\KSVDDic.mat');
 
 if (displayFlag)
     disp('finished Trainning dictionary');
