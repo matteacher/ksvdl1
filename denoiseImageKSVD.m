@@ -24,7 +24,7 @@ function [IOut,output] = denoiseImageKSVD(Image,sigma,K,varargin)
 
 % 训练字典
 reduceDC = 1;
-[NN1,NN2] = size(Image);
+[NN1,NN2,NN3] = size(Image);
 waitBarOn = 1;
 if (sigma > 5)
     numIterOfKsvd = 10;
@@ -84,20 +84,20 @@ end
 
 % 训练字典
 
-if(prod([NN1,NN2]-bb+1)> maxNumBlocksToTrainOn)
-    randPermutation =  randperm(prod([NN1,NN2]-bb+1));
+if(prod([NN1,NN2,NN3]-bb+1)> maxNumBlocksToTrainOn)
+    randPermutation =  randperm(prod([NN1,NN2,NN3]-bb+1));
     selectedBlocks = randPermutation(1:maxNumBlocksToTrainOn);%从乱序中去除前max个
-    blkMatrix = zeros(bb^2,maxNumBlocksToTrainOn); %64行max列的0
+    blkMatrix = zeros(bb^3,maxNumBlocksToTrainOn); %64行max列的0
     for i = 1:maxNumBlocksToTrainOn
-        [row,col] = ind2sub(size(Image)-bb+1,selectedBlocks(i));%一维索引转成多维下标
-        currBlock = Image(row:row+bb-1,col:col+bb-1);
+        [row,col,zz] = ind2sub(size(Image)-bb+1,selectedBlocks(i));%一维索引转成多维下标
+        currBlock = Image(row:row+bb-1,col:col+bb-1,zz:zz+bb-1);
         blkMatrix(:,i) = currBlock(:);
     end
 else
-    blkMatrix = im2col(Image,[bb,bb],'sliding');%分成8*8的子矩阵，每个矩阵作为一列。sliding表示可以重叠，尽可能多
+    blkMatrix = im2col(Image,[bb,bb,bb],'sliding');%分成8*8的子矩阵，每个矩阵作为一列。sliding表示可以重叠，尽可能多
 end
 
-param.K = K; %K=256
+param.K = K; %
 param.numIteration = numIterOfKsvd ;
 
 param.errorFlag = 1; % 停止条件是达到固定错误，而不是固定非零系数
@@ -105,15 +105,18 @@ param.errorGoal = sigma*C; %允许的错误
 param.preserveDCAtom = 0; %不保护第一列
 
 Pn=ceil(sqrt(K));%16
-DCT=zeros(bb,Pn);%8行16列
-for k=0:1:Pn-1,%计算DCI的每一列
-    V=cos([0:1:bb-1]'*k*pi/Pn);
-    if k>0, V=V-mean(V); end;
-    DCT(:,k+1)=V/norm(V);
-end;
-DCT=kron(DCT,DCT);%?Kronecker乘法,结果是64*256
+% DCT=zeros(bb,Pn);%8行16列
+% for k=0:1:Pn-1,%计算DCI的每一列
+%     V=cos([0:1:bb-1]'*k*pi/Pn);
+%     if k>0, V=V-mean(V); end;
+%     DCT(:,k+1)=V/norm(V);
+% end;
+% DCT=kron(DCT,DCT);%?Kronecker乘法,结果是64*256
 
-param.initialDictionary = DCT(:,1:param.K );%初始字典为DCT，64*256
+DCT=Image(:,1:2048);
+
+
+param.initialDictionary = DCT;%DCT(:,1:param.K );%初始字典为DCT，64*256
 param.InitializationMethod =  'GivenMatrix';
 
 if (reduceDC)%每个元素都减去当前列的均值

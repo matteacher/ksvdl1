@@ -21,10 +21,10 @@ function [IOut,output] = denoiseImageDCT(Image,sigma,K,varargin)
 
 
 Reduce_DC = 1;
-[NN1,NN2] = size(Image);
+[NN1,NN2,NN3] = size(Image);
 C = 1.15;
 waitBarOn = 1;
-maxBlocksToConsider = 260000;
+maxBlocksToConsider = 50000;%1500000;
 slidingDis = 1;
 bb = 8;
 z=30;
@@ -59,18 +59,28 @@ end
 errT = C*sigma;
 % Create an initial dictionary from the DCT frame
 Pn=ceil(sqrt(K)); %K=256  Pn=16
-DCT=zeros(bb,Pn); %8行16列
-for k=0:1:Pn-1,
-    V=cos([0:1:bb-1]'*k*pi/Pn);
-    if k>0, V=V-mean(V); end;
-    DCT(:,k+1)=V/norm(V);
-end;
-DCT=kron(DCT,DCT); %两个8x16的结果是64x256
+
+
+% DCT=zeros(bb,Pn); %8行16列
+% for k=0:1:Pn-1,
+%     V=cos([0:1:bb-1]'*k*pi/Pn);
+%     if k>0, V=V-mean(V); end;
+%     DCT(:,k+1)=V/norm(V);
+% end;
+% DCT=kron(DCT,DCT); %两个8x16的结果是64x256
+
+
+
 while (prod(floor((size(Image)-bb)/slidingDis)+1)>maxBlocksToConsider)
     slidingDis = slidingDis+1;
 end
 
-[blocks,idx] = my_im2col(Image,[bb,bb],slidingDis);%结果是64x255025和1x255025
+addpath('3d');
+[blocks,idx] = my_im2col3d(Image,[bb,bb,bb],slidingDis);%结果是64x255025和1x255025
+
+
+%字典D 512行 2048列
+DCT = blocks(:,1:2048);
 
 
 % %imwrite(DCT,'myDCT.bmp')
@@ -144,20 +154,20 @@ for jj = 1:10000:size(blocks,2) %从1到255025 每次跳10000个
 end
 
 count = 1;
-Weight= zeros(NN1,NN2); %图片是512x512的    
-IMout = zeros(NN1,NN2); %图片是512x512的
-[rows,cols] = ind2sub(size(Image)-bb+1,idx); %255025个随机索引对应在图片中块的位置 
+Weight= zeros(NN1,NN2,NN3); %图片是512x512的    
+IMout = zeros(NN1,NN2,NN3); %图片是512x512的
+[rows,cols,zzs] = ind2sub(size(Image)-bb+1,idx); %255025个随机索引对应在图片中块的位置 
 for i  = 1:length(cols)
-    col = cols(i); row = rows(i);
-    block =reshape(blocks(:,count),[bb,bb]);%将第count列还原为8x8大小
-    IMout(row:row+bb-1,col:col+bb-1)=IMout(row:row+bb-1,col:col+bb-1)+block; %将block填到对应位置，原值加上
-    Weight(row:row+bb-1,col:col+bb-1)=Weight(row:row+bb-1,col:col+bb-1)+ones(bb);
+    col = cols(i); row = rows(i); zz = zzs(i);
+    block =reshape(blocks(:,count),[bb,bb,bb]);%将第count列还原为8x8x8大小
+    IMout(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)=IMout(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)+block; %将block填到对应位置，原值加上
+    Weight(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)=Weight(row:row+bb-1,col:col+bb-1,zz:zz+bb-1)+ones([bb bb bb]);
     count = count+1;
 end;
 if (waitBarOn)
     close(h);
 end
-disp(['start for different sigam*lambda ' datestr(now,0)])
+%disp(['start for different sigam*lambda ' datestr(now,0)])
 %imshow(IMout,[]); title('imout');
 if size(zs,2)~= 0
     IOut = zeros([size(IMout) size(zs,2)]);
