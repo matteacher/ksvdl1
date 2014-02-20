@@ -104,7 +104,7 @@ param.errorFlag = 1; % 停止条件是达到固定错误，而不是固定非零系数
 param.errorGoal = sigma*C; %允许的错误
 param.preserveDCAtom = 0; %不保护第一列
 
-Pn=ceil(sqrt(K));%16
+Pn=ceil(K^(1/3));%16
 % DCT=zeros(bb,Pn);%8行16列
 % for k=0:1:Pn-1,%计算DCI的每一列
 %     V=cos([0:1:bb-1]'*k*pi/Pn);
@@ -113,8 +113,8 @@ Pn=ceil(sqrt(K));%16
 % end;
 % DCT=kron(DCT,DCT);%?Kronecker乘法,结果是64*256
 
-DCT=Image(:,1:2048);
-
+%DCT=Image(:,1:2048);
+load('C:\data\DCT3.mat')
 
 param.initialDictionary = DCT;%DCT(:,1:param.K );%初始字典为DCT，64*256
 param.InitializationMethod =  'GivenMatrix';
